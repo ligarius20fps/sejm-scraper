@@ -1,6 +1,6 @@
+import os.path
 import sqlite3
 from posel import Posel
-
 
 def connect_db():
     try:
@@ -19,8 +19,8 @@ def create_db():
         posel_id INTEGER PRIMARY KEY ,
         nazwa TEXT NOT NULL,
         partia TEXT NOT NULL,
-        wyksztalcenie TEXT NOT NULL,
-        szkola TEXT NOT NULL,
+        wyksztalcenie TEXT,
+        szkola TEXT,
         zawod TEXT NOT NULL
     );
     ''')

@@ -1,6 +1,13 @@
 from bs4 import BeautifulSoup
 from requests import get
 from posel import Posel
+from dbhelper import insert_posel_into_db, create_db
+
+def _none_or_text(_soup, _id):
+    if _soup.find(id=_id):
+        return _soup.find(id=_id).find_next_sibling().get_text()
+    else:
+        return None
 
 # dostęp do danych posłów mamy przez ten link:
 # https://sejm.gov.pl/Sejm9.nsf/posel.xsp?id=XXX
@@ -11,22 +18,25 @@ from posel import Posel
 
 url = 'https://sejm.gov.pl/Sejm9.nsf/posel.xsp?id='
 i = 1
-# while True:
-str_id = str(i)
-while len(str_id) < 3:
-    str_id = '0' + str_id
-strona = url + str_id
+create_db()
+while True:
+    str_id = str(i)
+    while len(str_id) < 3:
+        str_id = '0' + str_id
+    print('\rPoseł nr',str_id, end='')
+    strona = url + str_id
 
-req = get(strona)
-soup = BeautifulSoup(req.text, "html.parser")
-# zakładamy, że nie ma posła o danym id
-# jeśli nie ma nazwy
-nazwa = soup.find(id="title_content").h1.get_text()
-#if not nazwa:
-#    break
-partia = soup.find(id="lblLista").find_next_sibling().get_text()
-wyksz = soup.find(id="lblWyksztalcenie").find_next_sibling().get_text()
-szkola = soup.find(id="lblSzkola").find_next_sibling().get_text()
-zawod = soup.find(id="lblZawod").find_next_sibling().get_text()
-posel = Posel(nazwa, partia, wyksz, szkola, zawod)
-i += 1
+    req = get(strona)
+    soup = BeautifulSoup(req.text, "html.parser")
+    # zakładamy, że nie ma posła o danym id
+    # jeśli nie ma nazwy
+    nazwa = soup.find(id="title_content").h1.get_text()
+    if not nazwa:
+        break
+    partia = _none_or_text(soup, 'lblLista')
+    wyksz = _none_or_text(soup, 'lblWyksztalcenie')
+    szkola = _none_or_text(soup, 'lblSzkola')
+    zawod = _none_or_text(soup, 'lblZawod')
+    posel = Posel(nazwa, partia, wyksz, szkola, zawod)
+    insert_posel_into_db(posel)
+    i += 1
