@@ -5,3 +5,6 @@ class Posel:
         self.wyksztalcenie = wyksztalcenie,
         self.szkola = szkola
         self.zawod = zawod
+
+    def obj_into_tuple(self):
+        return self.nazwa, self.partia, self.wyksztalcenie, self.szkola, self.zawod

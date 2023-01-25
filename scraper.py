@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
 from requests import get
-import Posel
+from posel import Posel
 
 # dostęp do danych posłów mamy przez ten link:
 # https://sejm.gov.pl/Sejm9.nsf/posel.xsp?id=XXX
@@ -11,7 +11,7 @@ import Posel
 
 url = 'https://sejm.gov.pl/Sejm9.nsf/posel.xsp?id='
 i = 1
-#pętla
+# while True:
 str_id = str(i)
 while len(str_id) < 3:
     str_id = '0' + str_id
@@ -19,11 +19,14 @@ strona = url + str_id
 
 req = get(strona)
 soup = BeautifulSoup(req.text, "html.parser")
-
+# zakładamy, że nie ma posła o danym id
+# jeśli nie ma nazwy
 nazwa = soup.find(id="title_content").h1.get_text()
+#if not nazwa:
+#    break
 partia = soup.find(id="lblLista").find_next_sibling().get_text()
 wyksz = soup.find(id="lblWyksztalcenie").find_next_sibling().get_text()
 szkola = soup.find(id="lblSzkola").find_next_sibling().get_text()
 zawod = soup.find(id="lblZawod").find_next_sibling().get_text()
+posel = Posel(nazwa, partia, wyksz, szkola, zawod)
 i += 1
-#koniec pętli
