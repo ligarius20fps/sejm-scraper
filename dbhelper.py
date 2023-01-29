@@ -31,8 +31,8 @@ def insert_posel_into_db(posel: Posel):
     conn = connect_db()
     cur = conn.cursor()
     sql = '''
-    INSERT INTO poslowie(nazwa, partia, wyksztalcenie, szkola, zawod)
-    VALUES(?,?,?,?,?);
+    INSERT INTO poslowie(posel_id, nazwa, partia, wyksztalcenie, szkola, zawod)
+    VALUES(?,?,?,?,?,?);
     '''
     cur.execute(sql, posel.obj_into_tuple())
     conn.commit()
